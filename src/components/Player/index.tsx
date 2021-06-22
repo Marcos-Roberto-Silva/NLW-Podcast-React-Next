@@ -8,21 +8,25 @@ import styles from "./styles.module.scss";
 export function Player() {
   const audioRef = useRef<HTMLAudioElement>(null);
 
-  const { episodeList, currentEpisodeIndex, isPlaying, togglePlay } =
-    useContext(PlayerContext);
+  const {
+    episodeList,
+    currentEpisodeIndex,
+    isPlaying,
+    togglePlay,
+    setIsPlayingState,
+  } = useContext(PlayerContext);
 
+  useEffect(() => {
+    if (!audioRef.current) {
+      return;
+    }
 
-    useEffect(() => {
-      if(!audioRef.current) {
-        return;
-      }
-
-      if (isPlaying) {
-        audioRef.current.play();
-      } else {
-        audioRef.current.pause();
-      }
-    }, [isPlaying]);
+    if (isPlaying) {
+      audioRef.current.play();
+    } else {
+      audioRef.current.pause();
+    }
+  }, [isPlaying]);
 
   const episode = episodeList[currentEpisodeIndex];
 
@@ -53,12 +57,14 @@ export function Player() {
 
       <footer className={!episode ? styles.empty : ""}>
         {episode && (
-          <audio 
-             src={episode.url} 
-             ref={audioRef}
-             autoPlay />
-          )
-        }
+          <audio
+            src={episode.url}
+            ref={audioRef}
+            autoPlay
+            onPlay={() => setIsPlayingState(true)}
+            onPause={() => setIsPlayingState(false)}
+          />
+        )}
         <div className={styles.progress}>
           <span>00:00</span>
 
