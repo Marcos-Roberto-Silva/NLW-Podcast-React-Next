@@ -15,10 +15,14 @@ type PlayerContextData = {
   play: (episode: Episode) => void;
   playList(list: Episode[], index: number): void;
   isPlaying: boolean;
+  isLooping: boolean;
+  isShuffling: boolean;
   setIsPlayingState: (state: boolean) => void;
   togglePlay: () => void;
   playNext: () => void;
   playPrevious: () => void;
+  toggleLoop: () => void;
+  toggleShuffle: () => void;
   hasNext: boolean;
   hasPrevious: boolean;
 };
@@ -33,6 +37,8 @@ export function PlayerContextProvider({ children }: PlayerContextProvider) {
   const [episodeList, setEpisodeList] = useState([]);
   const [currentEpisodeIndex, setCurrentepisodeIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
+  const [isLooping, setIsLooping] = useState(false);
+  const [isShuffling, setIsShuffling] = useState(false);
 
   function play(episode: Episode) {
     setEpisodeList([episode]);
@@ -46,8 +52,16 @@ export function PlayerContextProvider({ children }: PlayerContextProvider) {
       setIsPlaying(true)
   }
 
+  function toggleShuffle() {
+    setIsShuffling(!isShuffling);
+  }
+
   function togglePlay() {
     setIsPlaying(!isPlaying);
+  }
+
+  function toggleLoop() {
+    setIsLooping(!isLooping);
   }
 
   function setIsPlayingState(state: boolean) {
@@ -59,7 +73,11 @@ export function PlayerContextProvider({ children }: PlayerContextProvider) {
   
 
   function playNext() {
-    if (hasNext) {
+    if (isShuffling) {
+      const nextRandomEpisodeIndex = Math.floor(Math.random() * episodeList.length);
+
+      setCurrentepisodeIndex(nextRandomEpisodeIndex);
+    } else if (hasNext) {
       setCurrentepisodeIndex(currentEpisodeIndex + 1);
     }
   }
@@ -77,13 +95,17 @@ export function PlayerContextProvider({ children }: PlayerContextProvider) {
         currentEpisodeIndex,
         play,
         isPlaying,
+        isShuffling,
+        isLooping,
         togglePlay,
+        toggleLoop,
         setIsPlayingState,
         playList,
         playPrevious,
         playNext,
         hasPrevious,
         hasNext,
+        toggleShuffle,
       }}
     >
       {children}
