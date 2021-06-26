@@ -10,7 +10,6 @@ import { convertDurationToTimeString } from '../../utils/convertDurationToTimeSt
 import styles from './episode.module.scss';
 import { PlayerContext, usePlayer } from '../../contexts/PlayerContext';
 
-
 type Episode = {
   id: string;
   title: string;
